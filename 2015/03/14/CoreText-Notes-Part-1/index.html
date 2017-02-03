@@ -85,22 +85,19 @@
 
 
 <meta name="description" content="CoreText是一种偏底层的技术，主要处理一些排版功能，比如处理字形、字体、行间距等等。说CoreText偏底层，是因为它其实就是Apple基于更底层库Quartz的一层封装，用起来更方便而已。由于其与Quartz直接打交道，所以性能也比上层的UIKit更高效。
-这里借用TextKit的架构图来说明下CoreText的架构注：TextKit是在iOS7之后才有的。
-CoreText的应用场景很多">
+这里借用TextKit的架构图来说明下CoreText的架构注：TextKit是在iOS7之后才有的。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="CoreText笔记 Part 1">
 <meta property="og:url" content="http://yoursite.com/2015/03/14/CoreText-Notes-Part-1/index.html">
 <meta property="og:site_name" content="longxdragon's blog">
 <meta property="og:description" content="CoreText是一种偏底层的技术，主要处理一些排版功能，比如处理字形、字体、行间距等等。说CoreText偏底层，是因为它其实就是Apple基于更底层库Quartz的一层封装，用起来更方便而已。由于其与Quartz直接打交道，所以性能也比上层的UIKit更高效。
-这里借用TextKit的架构图来说明下CoreText的架构注：TextKit是在iOS7之后才有的。
-CoreText的应用场景很多">
+这里借用TextKit的架构图来说明下CoreText的架构注：TextKit是在iOS7之后才有的。">
 <meta property="og:image" content="http://7xawis.com1.z0.glb.clouddn.com/coreText_source_1.png?attname=&e=1426391861&token=EavDcN8CE61SRk4t1LiiAqT0V3PXOy1jT5lkeVyr:cDx0mahNsbCW14GkJWC_lCpHvF4">
-<meta property="og:updated_time" content="2015-03-15T06:55:23.000Z">
+<meta property="og:updated_time" content="2017-02-03T03:36:17.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CoreText笔记 Part 1">
 <meta name="twitter:description" content="CoreText是一种偏底层的技术，主要处理一些排版功能，比如处理字形、字体、行间距等等。说CoreText偏底层，是因为它其实就是Apple基于更底层库Quartz的一层封装，用起来更方便而已。由于其与Quartz直接打交道，所以性能也比上层的UIKit更高效。
-这里借用TextKit的架构图来说明下CoreText的架构注：TextKit是在iOS7之后才有的。
-CoreText的应用场景很多">
+这里借用TextKit的架构图来说明下CoreText的架构注：TextKit是在iOS7之后才有的。">
 <meta name="twitter:image" content="http://7xawis.com1.z0.glb.clouddn.com/coreText_source_1.png?attname=&e=1426391861&token=EavDcN8CE61SRk4t1LiiAqT0V3PXOy1jT5lkeVyr:cDx0mahNsbCW14GkJWC_lCpHvF4">
 
 
@@ -334,8 +331,7 @@ CoreText的应用场景很多">
 
       
         <p>CoreText是一种偏底层的技术，主要处理一些排版功能，比如处理字形、字体、行间距等等。说CoreText偏底层，是因为它其实就是Apple基于更底层库<code>Quartz</code>的一层封装，用起来更方便而已。由于其与<code>Quartz</code>直接打交道，所以性能也比上层的<code>UIKit</code>更高效。</p>
-<p>这里借用<code>TextKit</code>的架构图来说明下CoreText的架构<br><img src="http://7xawis.com1.z0.glb.clouddn.com/coreText_source_1.png?attname=&amp;e=1426391861&amp;token=EavDcN8CE61SRk4t1LiiAqT0V3PXOy1jT5lkeVyr:cDx0mahNsbCW14GkJWC_lCpHvF4" alt=""><br>注：<code>TextKit</code>是在iOS7之后才有的。</p>
-<p>CoreText的应用场景很多，特别是一些对文字展示要求特别高的App。比如阅读器、新闻内容页展示、社交软件信息页等等，所以掌握CoreText很有必要。</p>
+<p>这里借用<code>TextKit</code>的架构图来说明下CoreText的架构<br><img src="http://7xawis.com1.z0.glb.clouddn.com/coreText_source_1.png?attname=&amp;e=1426391861&amp;token=EavDcN8CE61SRk4t1LiiAqT0V3PXOy1jT5lkeVyr:cDx0mahNsbCW14GkJWC_lCpHvF4" alt=""><br>注：<code>TextKit</code>是在iOS7之后才有的。<br><a id="more"></a><br>CoreText的应用场景很多，特别是一些对文字展示要求特别高的App。比如阅读器、新闻内容页展示、社交软件信息页等等，所以掌握CoreText很有必要。</p>
 <p>下面我们自定义了一个View，并重写<code>drawRect</code>方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">- (void)drawRect:(CGRect)rect &#123;</div><div class="line">    [super drawRect:rect];</div><div class="line">    </div><div class="line">    // 1</div><div class="line">    CGContextRef context = UIGraphicsGetCurrentContext();</div><div class="line">    </div><div class="line">    // 2</div><div class="line">    CGContextSetTextMatrix(context, CGAffineTransformIdentity);</div><div class="line">    CGContextTranslateCTM(context, 0, self.bounds.size.height);</div><div class="line">    CGContextScaleCTM(context, 1.0, -1.0);</div><div class="line">    </div><div class="line">    // 3</div><div class="line">    CGMutablePathRef path = CGPathCreateMutable();</div><div class="line">    CGPathAddRect(path, NULL, self.bounds);</div><div class="line">    </div><div class="line">    // 4</div><div class="line">    NSAttributedString *attString = [[NSAttributedString alloc] initWithString:@&quot;Hello CoreText!&quot;];</div><div class="line">    </div><div class="line">    // 5</div><div class="line">    CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)attString);</div><div class="line">    CTFrameRef frame = CTFramesetterCreateFrame(framesetter, CFRangeMake(0, [attString length]), path, NULL);</div><div class="line">    </div><div class="line">    // 6</div><div class="line">    CTFrameDraw(frame, context);</div><div class="line">    </div><div class="line">    CFRelease(frame);</div><div class="line">    CFRelease(framesetter);</div><div class="line">    CFRelease(path);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <p>1、获得当前绘制的上下文；<br>2、由于<code>Quartz</code>库中是以左下角为（0，0）原点坐标，而CoreText的原点坐标是右上角，那么就需要上下翻转一下。<br>3、设置绘制的区域，本例中是矩形，当然你也可以尝试其他设置，比如：<code>CGPathAddArc()</code>方法设置绘制区域为圆形。<br>4、创建<code>NSAttributedString</code>，<code>NSAttributedString</code>就是CoreText的数据源，所有要绘制的格式都是在<code>NSAttributedString</code>里面设置，比如字体颜色、字形、段落、行距等等。<br>5、把<code>NSAttributedString</code>转化成<code>CTFramesetterRef</code>，再通过<code>CTFramesetterRef</code>创建<code>CTFrameRef</code>，CoreText的核心就是通过<code>CTFrameRef</code>绘制。<br>6、绘制。</p>
 <p>下面介绍一些常用的属性：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">kCTFontAttributeName //字体   CTFontRef</div><div class="line">kCTForegroundColorFromContextAttributeName //背景颜色   CGColorRef</div><div class="line">kCTForegroundColorAttributeName //字体颜色   CGColorRef</div><div class="line">kCTParagraphStyleAttributeName //段落格式   CTParagraphStyleRef</div><div class="line">kCTUnderlineStyleAttributeName  //下划线宽度  CFNumberRef</div><div class="line">kCTUnderlineColorAttributeName //下划线颜色  CGColorRef</div></pre></td></tr></table></figure></p>

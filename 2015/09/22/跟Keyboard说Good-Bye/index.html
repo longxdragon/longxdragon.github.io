@@ -92,7 +92,7 @@
 <meta property="og:site_name" content="longxdragon's blog">
 <meta property="og:description" content="iOS开发中，键盘事件一直是一件让开发者头疼的事，它不像安卓开发那样，系统会自动把输入框往上推，而iOS开发则不同，它需要开发者自己计算高度，并根据相应的需求去移动对应的View，这样的过程，机械重复，但又无法避免。过去的我，一直这样，在坑里爬着。。。
 首先，我们来看看与键盘事件有关的几个需求：1、页面有一个输入框，输入文字时，键盘弹出，如果挡着输入框，则需要把输入框或整个背景View往上推到合适">
-<meta property="og:updated_time" content="2015-10-06T05:40:36.000Z">
+<meta property="og:updated_time" content="2017-02-03T02:00:12.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="跟Keyboard说Good Bye">
 <meta name="twitter:description" content="iOS开发中，键盘事件一直是一件让开发者头疼的事，它不像安卓开发那样，系统会自动把输入框往上推，而iOS开发则不同，它需要开发者自己计算高度，并根据相应的需求去移动对应的View，这样的过程，机械重复，但又无法避免。过去的我，一直这样，在坑里爬着。。。
@@ -329,8 +329,7 @@
 
       
         <p>iOS开发中，键盘事件一直是一件让开发者头疼的事，它不像安卓开发那样，系统会自动把输入框往上推，而iOS开发则不同，它需要开发者自己计算高度，并根据相应的需求去移动对应的View，这样的过程，机械重复，但又无法避免。过去的我，一直这样，在坑里爬着。。。</p>
-<p>首先，我们来看看与键盘事件有关的几个需求：<br>1、页面有一个输入框，输入文字时，键盘弹出，如果挡着输入框，则需要把输入框或整个背景View往上推到合适的位置。<br>2、页面有好多输入框时，键盘应该不能挡着对应输入源的输入框。<br>3、页面的输入框可能不是单一层级，可能处于更深层级的View上，即View-&gt;View-&gt;…-&gt;输入框的层级关系时，以上需求依旧。</p>
-<p>好吧！当初我看到这样的需求时，我的反应是很简单，不就是很正常的步骤：<br>1、在ViewController中注册键盘的监听。<br>2、弹出键盘，根据键盘的高度和输入框的底部来判断，是否把View往上移动，以及移动多少。<br>3、输入框多的话，多加个判断，就是找出那个输入框正在处于被输入状态(<code>isFirstResponder</code>)。<br>4、。。。。。。</p>
+<p>首先，我们来看看与键盘事件有关的几个需求：<br>1、页面有一个输入框，输入文字时，键盘弹出，如果挡着输入框，则需要把输入框或整个背景View往上推到合适的位置。<br>2、页面有好多输入框时，键盘应该不能挡着对应输入源的输入框。<br>3、页面的输入框可能不是单一层级，可能处于更深层级的View上，即View-&gt;View-&gt;…-&gt;输入框的层级关系时，以上需求依旧。<br><a id="more"></a><br>好吧！当初我看到这样的需求时，我的反应是很简单，不就是很正常的步骤：<br>1、在ViewController中注册键盘的监听。<br>2、弹出键盘，根据键盘的高度和输入框的底部来判断，是否把View往上移动，以及移动多少。<br>3、输入框多的话，多加个判断，就是找出那个输入框正在处于被输入状态(<code>isFirstResponder</code>)。<br>4、。。。。。。</p>
 <p>写着写着开始有点后怕了，那么多页面呢？我总不能每次都这么算吧？而且还有第3种那样的需求，计算的程度肯定更复杂。虽然大多数不复杂的界面，Copy下代码，改改就可以了！但懒惰的我，望而却步，我要跟这种方式说byebye!!!</p>
 <p>废话不多说，直接上代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[[LXKeyboardNotification defaultNotification] addKeyboardNotificationForSuperView:self.view superViewTopMargin:0];</div></pre></td></tr></table></figure></p>
 <p>只需要这样一句话，你就可以轻松的实现键盘挡出输入框的问题啦，是不是发现很简单？！<br>这里为了跟ViewController脱离关系，我创建了一个管理类<code>LXKeyboardNotification</code>，注册、移除键盘监听也在这里去完成的。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">- (instancetype)init &#123;</div><div class="line">    self = [super init];</div><div class="line">    if (self) &#123;</div><div class="line">        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardShowNotify:) name:UIKeyboardWillShowNotification object:nil];</div><div class="line">        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardHideNotify:) name:UIKeyboardWillHideNotification object:nil];</div><div class="line">    &#125;</div><div class="line">    return self;</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (void)dealloc &#123;</div><div class="line">    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];</div><div class="line">    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>

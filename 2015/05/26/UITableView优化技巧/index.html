@@ -92,7 +92,7 @@ UITableView作为iOS开发中最重要的控件之一，其中的实现原理很
 <meta property="og:site_name" content="longxdragon's blog">
 <meta property="og:description" content="最近在微博上看到一个很好的开源项目VVeboTableViewDemo，是关于如何优化UITableView的。加上正好最近也在优化项目中的类似朋友圈功能这块，思考了很多关于UITableView的优化技巧，相信这块是难点也是痛点，所以决定详细的整理下我对优化UITableView的理解。
 UITableView作为iOS开发中最重要的控件之一，其中的实现原理很是考究。Apple在这块的优化水平直">
-<meta property="og:updated_time" content="2015-05-27T02:20:22.000Z">
+<meta property="og:updated_time" content="2017-02-03T03:36:49.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="UITableView优化技巧">
 <meta name="twitter:description" content="最近在微博上看到一个很好的开源项目VVeboTableViewDemo，是关于如何优化UITableView的。加上正好最近也在优化项目中的类似朋友圈功能这块，思考了很多关于UITableView的优化技巧，相信这块是难点也是痛点，所以决定详细的整理下我对优化UITableView的理解。
@@ -329,7 +329,7 @@ UITableView作为iOS开发中最重要的控件之一，其中的实现原理很
 
       
         <p>最近在微博上看到一个很好的开源项目<a href="https://github.com/johnil/VVeboTableViewDemo" target="_blank" rel="external">VVeboTableViewDemo</a>，是关于如何优化UITableView的。加上正好最近也在优化项目中的类似朋友圈功能这块，思考了很多关于UITableView的优化技巧，相信这块是难点也是痛点，所以决定详细的整理下我对优化UITableView的理解。</p>
-<p>UITableView作为iOS开发中最重要的控件之一，其中的实现原理很是考究。Apple在这块的优化水平直接决定了iOS的体验能甩安卓几条街，哈哈，扯淡扯多了。。。好了，废话不多说，直接进入主题。首先来谈谈我对UITableView的认识：</p>
+<p>UITableView作为iOS开发中最重要的控件之一，其中的实现原理很是考究。Apple在这块的优化水平直接决定了iOS的体验能甩安卓几条街，哈哈，扯淡扯多了。。。好了，废话不多说，直接进入主题。首先来谈谈我对UITableView的认识：<br><a id="more"></a></p>
 <p>##UITableView的简单认识<br>UITableView最核心的思想就是UITableViewCell的重用机制。简单的理解就是：UITableView只会创建一屏幕（或一屏幕多一点）的UITableViewCell，其他都是从中取出来重用的。每当Cell滑出屏幕时，就会放入到一个集合（或数组）中（这里就相当于一个重用池），当要显示某一位置的Cell时，会先去集合（或数组）中取，如果有，就直接拿来显示；如果没有，才会创建。这样做的好处可想而知，极大的减少了内存的开销。</p>
 <p>知道UITableViewCell的重用原理后，我们来看看UITableView的回调方法。UITableView最主要的两个回调方法是<code>tableView:cellForRowAtIndexPath:</code>和<code>tableView:heightForRowAtIndexPath:</code>。理想上我们是会认为UITableView会先调用前者，再调用后者，因为这和我们创建控件的思路是一样的，先创建它，再设置它的布局。但实际上却并非如此，我们都知道，UITableView是继承自UIScrollView的，需要先确定它的<code>contentSize</code>及每个Cell的位置，然后才会把重用的Cell放置到对应的位置。所以事实上，UITableView的回调顺序是先多次调用<code>tableView:heightForRowAtIndexPath:</code>以确定<code>contentSize</code>及Cell的位置，然后才会调用<code>tableView:cellForRowAtIndexPath:</code>，从而来显示在当前屏幕的Cell。</p>
 <p>举个例子来说：如果现在要显示100个Cell，当前屏幕显示5个。那么刷新（<code>reload</code>）UITableView时，UITableView会先调用100次<code>tableView:heightForRowAtIndexPath:</code>方法，然后调用5次<code>tableView:cellForRowAtIndexPath:</code>方法；滚动屏幕时，每当Cell滚入屏幕，都会调用一次<code>tableView:heightForRowAtIndexPath:</code>、<code>tableView:cellForRowAtIndexPath:</code>方法。</p>
